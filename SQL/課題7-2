@@ -1,0 +1,11 @@
+SELECT
+	customer_id,
+	SUBSTR( order_time, 1, 7) AS Month,
+	shop_id,
+	SUM ( order_amount ) AS amount
+FROM
+	orders 
+GROUP BY
+	customer_id, Month, shop_id
+;
+

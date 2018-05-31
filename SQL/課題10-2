@@ -1,0 +1,74 @@
+WITH T_1 AS (
+SELECT
+	customer_id AS c_id,
+	COUNT ( * ) AS pv
+FROM
+	access_log
+WHERE
+	customer_id IS NOT NULL
+GROUP BY
+	customer_id
+),
+SUB_1 AS(
+SELECT
+	ROWID AS id_1,
+	customer_id AS c_id1,
+	julianday(request_time )AS Time_1
+FROM
+	access_log
+),
+SUB_2 AS (
+SELECT
+	ROWID AS id_2,
+		customer_id AS c_id2,
+	julianday(request_time) AS Time_2
+FROM
+	access_log
+),
+SUB_3 AS(
+SELECT
+	 id_2,
+	 Time_1-Time_2 AS Time
+FROM
+	SUB_1
+INNER JOIN
+	SUB_2
+ON
+	SUB_1.id_1-1 = SUB_2.id_2
+AND
+	SUB_1.c_id1 = SUB_2.c_id2
+	),
+SUB_4 AS(
+SELECT
+	ROWID,
+	*
+FROM
+	access_log
+),
+T_2 AS(
+SELECT
+	customer_id AS c_id,
+	COUNT(Time *24>=1) AS session
+FROM
+	SUB_4
+INNER JOIN
+	SUB_3
+ON
+	SUB_3.id_2 = SUB_4.ROWID
+GROUP BY
+	c_id
+)
+SELECT
+	T_1.c_id,
+	pv,
+	session,
+	pv / (session+1) AS Mean_pv
+FROM
+	T_1
+INNER JOIN
+	T_2
+ON
+	T_1.c_id = T_2.c_id
+;
+
+

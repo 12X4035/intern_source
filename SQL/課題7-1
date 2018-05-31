@@ -1,0 +1,36 @@
+WITH Customer_Amount AS(
+SELECT
+orders.customer_id AS Customer_id,
+substr(order_time, 1,7) AS Month,
+customer_location As Location,
+order_amount AS Amount
+FROM
+orders
+INNER JOIN
+customers
+ON
+orders.customer_id = customers.customer_id
+GROUP BY
+Location,
+Month,
+orders.customer_id
+)
+SELECT
+*
+FROM
+Customer_Amount AS C_A1
+WHERE
+	(SELECT
+	COUNT(*)
+	FROM
+	Customer_Amount AS C_A2
+	WHERE
+	C_A1.Customer_id = C_A2.Customer_id
+	AND
+	C_A1.Month = C_A2.Month
+	AND
+	C_A1.Location = C_A2.Location
+	AND
+	C_A1.Amount < C_A2 .Amount
+	)
+	<5

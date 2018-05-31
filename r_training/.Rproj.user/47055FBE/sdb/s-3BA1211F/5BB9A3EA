@@ -1,0 +1,25 @@
+{
+    "contents" : "",
+    "created" : 1496121746088.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "5BB9A3EA",
+    "lastKnownWriteTime" : 0,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "s8jng6lxc3",
+        "caption" : "df_train_dummy",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=df_train_dummy&cache_key=s8jng6lxc3",
+        "displayedObservations" : "891",
+        "environment" : "",
+        "object" : "df_train_dummy",
+        "totalObservations" : "891",
+        "variables" : "14"
+    },
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}

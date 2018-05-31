@@ -1,0 +1,41 @@
+WITH A AS(
+SELECT
+	order_id,
+	item_price/item_qty AS price
+FROM
+	order_details
+),
+B AS(
+SELECT
+	shop_id,
+	order_amount*price AS p,
+	substr(order_time, 1,7) ||"-01"AS month
+FROM
+	orders
+INNER JOIN
+	A
+ON
+	orders.order_id=A.order_id
+GROUP BY
+	shop_id,month
+),
+C AS(
+SELECT
+	shop_id,
+	p,
+	month
+FROM
+	B
+)
+SELECT
+	B.p AS BEFORE,
+	C.p AS ,
+	B.month,
+	1.0*C.p/B.p AS RATE
+FROM
+	B
+INNER JOIN
+	C
+ON
+	B.shop_id=C.shop_id AND DATE(C.month, "+1 months")=B.month
+;

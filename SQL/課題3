@@ -1,0 +1,46 @@
+WITH A AS(
+	SELECT
+	customer_id,
+	((orders.order_amount/item_qty)*item_price) AS price
+	FROM
+	orders
+	INNER JOIN
+	order_details
+	ON
+	orders.order_id=order_details.order_id),
+B	AS (
+SELECT
+ *
+FROM
+customers
+INNER JOIN
+A
+ON
+customers.customer_id=A.customer_id
+ORDER BY
+price 
+LIMIT
+3),
+C AS(
+SELECT
+ *
+FROM
+customers
+INNER JOIN
+A
+ON
+customers.customer_id=A.customer_id
+ORDER BY
+price DESC 
+LIMIT
+3)
+SELECT
+*
+FROM
+B
+UNION
+SELECT
+*
+FROM
+C
+;

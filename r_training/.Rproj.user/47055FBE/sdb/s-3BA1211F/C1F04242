@@ -1,0 +1,18 @@
+{
+    "contents" : "---\ntitle: \"5-30\"\nauthor: \"D\"\ndate: \"2017年5月30日\"\noutput: html_document\n---\n###使用したライブラリ\n- library(dplyr)\n- library(GGally)\n- library(ggplot2)\n- library(makedummies)\n- library(ranger)\n- library(scales)\n- library(stringr)\n- library(tidyr)\n- library(kernlab)\n- library(caret)\n\n\n\n```{r　include=FALSE}\nlibrary(dplyr)\nlibrary(GGally) \nlibrary(ggplot2)\nlibrary(makedummies)\nlibrary(ranger)\nlibrary(scales)\nlibrary(stringr)\nlibrary(tidyr)\nlibrary(kernlab)\nlibrary(caret)\nlibrary(knitr)\ndf_train<-read.csv(\"train.csv\", na.strings = (c(\"NA\", \"\")))\ndf_test<-read.csv(\"test.csv\", na.strings = (c(\"NA\", \"\")))\n```\nとりあえず中身の確認.\n```{r}\ntrain_head<-df_train[(1:5),]\nkable(train_head, format=\"markdown\")\n```\n\n```{r}\ntest_head<-df_test[(1:5),]\nkable(test_head, format=\"markdown\")\n```\n\n邪魔そうなNameとTicketを取り出して,　基本統計量を見る.\n```{r}\ntrain_base<-df_train%>%\n  dplyr::select(-Name, -Ticket)\nsummary(train_base)\n```\n\n```{r}\ntest_base<-df_test%>%\n  dplyr::select(-Name, -Ticket)\nsummary(test_base)\n```\n####trainデータからわかること<br>\n- 亡くなった人の方が多い\n- Pclass3の人が大半で, Pclass1の人はほとんどいない\n- 男性の方が多い\n- 20代後半の人が多く, 高齢者は少なかったと考えられる\n- 兄弟や配偶者と乗船している人は2人に1人ほどで, 最大8人\n- 親子で乗船した人は少なく,最大6人\n- <font color = \"red\">CabinとAgeの欠損値が多い</font>\n- 乗船場所はSが最も多く,最も少ないQとは大きな差がある\n<br>\nCabinも欠損値が多いためとりあえず抜かしておく.\n```{r}\ntrain_base<-train_base%>%\n    dplyr::select(-Cabin)\n\ntest_base<-test_base%>%\n    dplyr::select(-Cabin)\n```\n###欠損値の処理\nAgeは平均値で, Embarkedを最頻値であるSで補完する.\n```{r}\n#remove Age`s NA\ntrain_base$Age<-ifelse(is.na(train_base$Age), mean(train_base$Age,na.rm=TRUE), train_base$Age)\ntest_base$Age<-ifelse(is.na(test_base$Age), mean(test_base$Age,na.rm=TRUE), test_base$Age)\n```\n\n```{r}\n#insert Embarked`s NA\ntrain_base$Embarked<-ifelse(is.na(train_base$Embarked), 3, train_base$Embarked)\ntest_base$Embarked<-ifelse(is.na(test_base$Embarked), 3, test_base$Embarked)\n```\n視覚化して確認\n```{r warning=FALSE, message=FALSE, fig.width=10, fig.height=8}\ngg_train<-train_base%>%\n    dplyr::select(-PassengerId)\ngg_train$Survived<-as.factor(gg_train$Survived)\ngg_train$Sex<-as.integer(gg_train$Sex)\nggpairs(gg_train, aes_string(color=\"Survived\", alpha=0.5))\n\n```\n",
+    "created" : 1496105969186.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "511064324",
+    "id" : "C1F04242",
+    "lastKnownWriteTime" : 1496115662,
+    "path" : "~/Documents/kaggle/5-30.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}

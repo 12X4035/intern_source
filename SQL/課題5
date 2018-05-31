@@ -1,0 +1,29 @@
+WITH A AS(
+SELECT
+order_id,
+julianday(order_time) AS X 
+FROM
+orders
+),
+ B AS(
+SELECT
+order_id,
+julianday(order_time) AS Y 
+FROM
+orders
+),
+C AS(
+SELECT
+*
+FROM
+A
+INNER JOIN
+B
+ON
+A.order_id-1=B.order_id
+)
+SELECT
+AVG(X-Y)*24*60AS AVG
+FROM
+C
+;

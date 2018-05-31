@@ -1,0 +1,18 @@
+{
+    "contents" : "---\ntitle: \"Kaggle5/29\"\nauthor: \"D\"\ndate: \"2017年5月29日\"\noutput: html_document\n---\n\n###使用したライブラリ<br>\n・caret (機械学習の使用)<br>\n・dplyr (データの形成)<br>\n・data.table  (大規模データの高速処理)<br>\n・ggplot2 (描画ツール)<br>\n・kernlab (SVMの使用)<br>\n・makedummies (ダミー変数の作成)<br>\n・ranger  （ランダムフォレストの使用）<br>\n・stringr (文字列の処理)<br>\n\n```{r include=FALSE}\nlibrary(caret)\nlibrary(dplyr)\nlibrary(data.table)\nlibrary(ggplot2)\nlibrary(kernlab)\nlibrary(makedummies)\nlibrary(ranger)\nlibrary(stringr)\n\n```\n###データの読み込み\n```{r, }\ndf_train<-read.csv(\"train.csv\", na.strings = (c(\"NA\", \"\")))\ndf_test<-read.csv(\"test.csv\", na.strings = (c(\"NA\", \"\")))\n```\nこれで, Pythonのデータとも一致する. \n###欠損値の処理\n実際の欠損値（NA）の数を確認する.  \n```{r}\nna_count_train<-sapply(df_train, function(y) sum(is.na(y)))\nna_count_test<-sapply(df_test, function(y) sum(is.na(y)))\nna_count_train\nna_count_test\n```\n名前の分割\n```{r}\n#separate Name\n#(train)\nname_sep_train<-str_split_fixed(df_train$Name, \"[,.]\", 3)\nname_sep_train<-as.data.frame(name_sep_train)\ncolnames(name_sep_train)<-c(\"Surname\",\"Honorific\",\"Givenname\")\n\ndf_train$Name<-name_sep_train$Honorific\n#(test)\nname_sep_test<-str_split_fixed(df_test$Name, \"[,.]\", 3)\nname_sep_test<-as.data.frame(name_sep_test)\ncolnames(name_sep_test)<-c(\"Surname\",\"Honorific\",\"Givenname\")\n\ndf_test$Name<-name_sep_test$Honorific\n```  \n次にdummy変数を導入する\n```{r}\n#make dummy variables\ndf_train_sub<-makedummies(df_train,basal_level=TRUE, as.is=c(\"Name\", \"Ticket\", \"Cabin\"))\ndf_train_sub$Age<-as.integer(df_train_sub$Age)\n\ndf_test_sub<-makedummies(df_test,basal_level=TRUE, as.is=c(\"Name\", \"Ticket\", \"Cabin\"))\ndf_test_sub$Age<-as.integer(df_test_sub$Age)\n```\nこの結果からもわかるように, Cabinは欠損値が多いので取り除くこととする.\n\n```{r}\n#remove Cabin\ndf_train_mod<-df_train%>%\n  dplyr::select(-PassengerId,-Ticket, -Cabin, -Name)\n\ndf_test_mod<-df_test%>%\n  dplyr::select(-PassengerId,-Ticket, -Cabin, -Name)\n```\nまた, 他の列に関しても欠損値を補完する.\n今回は年齢は平均値で, 補完した.\n```{r}\n#remove Age`s NA\ndf_train_mod$Age<-ifelse(is.na(df_train_mod$Age), mean(df_train_mod$Age,na.rm=TRUE), df_train_mod$Age)\ndf_test_mod$Age<-ifelse(is.na(df_test_mod$Age), mean(df_test_mod$Age,na.rm=TRUE), df_test_mod$Age)\n```\n\n```{r}\n#insert Embarked`s NA\ndf_train_mod$Embarked<-as.factor(df_train_mod$Embarked)\ndf_test_mod$Embarked<-as.factor(df_test_mod$Embarked)\n\ndf_train_mod$Embarked<-ifelse(is.na(df_train_mod$Embarked), 3, df_train_mod$Embarked)\ndf_test_mod$Embarked<-ifelse(is.na(df_test_mod$Embarked), 3, df_test_mod$Embarked)\n```\n\n```{r}\n#test of  Fare`s NA\ndf_test_mod$Fare<-ifelse(is.na(df_test_mod$Fare), mean(df_test_mod$Fare,na.rm=TRUE), df_test_mod$Fare)\n```\n\n\n```{r}\nfit<-ksvm(\n  as.factor(Survived)~.,\n  data = df_train_mod\n)\npred <- predict(fit, df_test_mod)\n```\n\n```{r}\nx<-data.frame(PassengerId=df_test$PassengerId, Survived=pred)\n```\n",
+    "created" : 1496023231476.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4286321968",
+    "id" : "92DDCACD",
+    "lastKnownWriteTime" : 1496028394,
+    "path" : "~/Documents/kaggle/Kaggle5:29.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}

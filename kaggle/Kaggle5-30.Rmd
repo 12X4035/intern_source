@@ -1,0 +1,98 @@
+---
+title: "5-30"
+author: "D"
+date: "2017年5月30日"
+output: html_document
+---
+###使用したライブラリ
+- library(dplyr)
+- library(GGally)
+- library(ggplot2)
+- library(makedummies)
+- library(ranger)
+- library(scales)
+- library(stringr)
+- library(tidyr)
+- library(kernlab)
+- library(caret)
+
+
+
+```{r　include=FALSE}
+library(dplyr)
+library(GGally) 
+library(ggplot2)
+library(makedummies)
+library(ranger)
+library(scales)
+library(stringr)
+library(tidyr)
+library(kernlab)
+library(caret)
+library(knitr)
+df_train<-read.csv("train.csv", na.strings = (c("NA", "")))
+df_test<-read.csv("test.csv", na.strings = (c("NA", "")))
+```
+とりあえず中身の確認.
+```{r}
+train_head<-df_train[(1:5),]
+kable(train_head, format="markdown")
+```
+
+```{r}
+test_head<-df_test[(1:5),]
+kable(test_head, format="markdown")
+```
+
+邪魔そうなNameとTicketを取り出して,　基本統計量を見る.
+```{r}
+train_base<-df_train%>%
+  dplyr::select(-Name, -Ticket)
+summary(train_base)
+```
+
+```{r}
+test_base<-df_test%>%
+  dplyr::select(-Name, -Ticket)
+summary(test_base)
+```
+####trainデータからわかること<br>
+- 亡くなった人の方が多い
+- Pclass3の人が大半で, Pclass1の人はほとんどいない
+- 男性の方が多い
+- 20代後半の人が多く, 高齢者は少なかったと考えられる
+- 兄弟や配偶者と乗船している人は2人に1人ほどで, 最大8人
+- 親子で乗船した人は少なく,最大6人
+- <font color = "red">CabinとAgeの欠損値が多い</font>
+- 乗船場所はSが最も多く,最も少ないQとは大きな差がある
+<br>
+Cabinも欠損値が多いためとりあえず抜かしておく.
+```{r}
+train_base<-train_base%>%
+    dplyr::select(-Cabin)
+
+test_base<-test_base%>%
+    dplyr::select(-Cabin)
+```
+###欠損値の処理
+Ageは平均値で, Embarkedを最頻値であるSで補完する.
+```{r}
+#remove Age`s NA
+train_base$Age<-ifelse(is.na(train_base$Age), mean(train_base$Age,na.rm=TRUE), train_base$Age)
+test_base$Age<-ifelse(is.na(test_base$Age), mean(test_base$Age,na.rm=TRUE), test_base$Age)
+```
+
+```{r}
+#insert Embarked`s NA
+train_base$Embarked<-ifelse(is.na(train_base$Embarked), 3, train_base$Embarked)
+test_base$Embarked<-ifelse(is.na(test_base$Embarked), 3, test_base$Embarked)
+```
+視覚化して確認
+```{r warning=FALSE, message=FALSE, fig.width=10, fig.height=8}
+gg_train<-train_base%>%
+    dplyr::select(-PassengerId)
+gg_train$Survived<-as.factor(gg_train$Survived)
+gg_train$Sex<-as.integer(gg_train$Sex)
+ggpairs(gg_train, aes_string(color="Survived", alpha=0.5))
+
+```

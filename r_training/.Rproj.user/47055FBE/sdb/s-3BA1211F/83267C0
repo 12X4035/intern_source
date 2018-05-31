@@ -1,0 +1,18 @@
+{
+    "contents" : "library(dplyr)\nlibrary(GGally) \nlibrary(ggplot2)\nlibrary(makedummies)\nlibrary(ranger)\nlibrary(scales)\nlibrary(stringr)\nlibrary(tidyr)\nlibrary(kernlab)\nlibrary(caret)\n\ndf_train<-read.csv(\"train.csv\", na.strings = (c(\"NA\", \"\")))\ndf_test<-read.csv(\"test.csv\", na.strings = (c(\"NA\", \"\")))\n\n\n##separate Name\n#(train)\ndf_train <- df_train %>% \n  separate(\"Name\", into=c(\"Last_Name\", \"Title\"), sep=\",\") %>% \n  mutate(Title = gsub(\"\\\\..+$\", \"\", Title)) %>% \n  mutate(Title = gsub(\" \", \"\", Title))\n#(test)\ndf_test <- df_test %>% \n  separate(\"Name\", into=c(\"Last_Name\", \"Title\"), sep=\",\") %>% \n  mutate(Title = gsub(\"\\\\..+$\", \"\", Title)) %>% \n  mutate(Title = gsub(\" \", \"\", Title))\n\n#中央値で補完（Age）\n#(train)\ndf_train_age<-df_train%>%\n  dplyr::mutate(age=ifelse(Title==\"Mr\"&is.na(Age), 30,\n                           ifelse(Title==\"Mrs\"&is.na(Age), 35,\n                                  ifelse(Title==\"Dr\"&is.na(Age), 46.5,\n                                         ifelse(Title==\"Master\"&is.na(Age), 3.5,\n                                                ifelse(Title==\"Miss\"&is.na(Age), 21, Age))))))%>%\n  dplyr::select(-Age)\n#(test)\ndf_test_age<-df_test%>%\n  dplyr::mutate(age=ifelse(Title==\"Mr\"&is.na(Age), 28.5,\n                           ifelse(Title==\"Mrs\"&is.na(Age), 36.5,\n                                  ifelse(Title==\"Ms\"&is.na(Age), 28,\n                                         ifelse(Title==\"Master\"&is.na(Age), 7,\n                                                ifelse(Title==\"Miss\"&is.na(Age), 22, Age))))))%>%\n  dplyr::select(-Age)\n\n#敬称のダミー化\ndf_train_dummy<-df_train_age%>%\n  dplyr::mutate(title=ifelse(Title==\"Mr\", 1,\n                      ifelse(Title==\"Mrs\", 2,\n                      ifelse(Title==\"Miss\", 3,4))))\n\ndf_test_dummy<-df_test_age%>%\n  dplyr::mutate(title=ifelse(Title==\"Mr\", 1,\n                             ifelse(Title==\"Mrs\", 2,\n                                    ifelse(Title==\"Miss\", 3,4))))\n\n#データの整形\ndf_train_mod<-df_train_dummy%>%\n  dplyr::select(-Cabin, -Title, -Last_Name, -Ticket, -PassengerId)\n\ndf_test_mod<-df_test_dummy%>%\n  dplyr::select(-Cabin, -Title, -Last_Name, -Ticket, -PassengerId)\n\ndf_train_mod$Embarked<-ifelse(is.na(df_train_mod$Embarked), 3, df_train_mod$Embarked)\ndf_test_mod$Embarked<-ifelse(is.na(df_test_mod$Embarked), 3, df_test_mod$Embarked)\n\ndf_test_mod$Fare<-ifelse(is.na(df_test_mod$Fare), median(df_test_mod$Fare,na.rm=TRUE), df_test_mod$Fare)\n\nfit<-ksvm(\n  as.factor(Survived)~.,\n  data = df_train_mod\n)\n\npred <- predict(fit, df_test_mod)\n\nx<-data.frame(PassengerId=df_test$PassengerId, Survived=pred)\n\nwrite.csv(y,\"RF.csv\", quote=FALSE, row.names=FALSE)\n\n#RF\nrandom_f<-ranger(\n  Survived~.,\n  data = df_train_mod,\n  write.forest = TRUE\n)\nresult<-predict(random_f, data = df_test_mod)\nresult<-ifelse(result$predictions>=0.5, 1, 0)\ny<-data.frame(PassengerId=df_test$PassengerId, Survived=result)\n",
+    "created" : 1496121019904.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3589872642",
+    "id" : "83267C0",
+    "lastKnownWriteTime" : 1496124007,
+    "path" : "~/Documents/kaggle/Titanic.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 11,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

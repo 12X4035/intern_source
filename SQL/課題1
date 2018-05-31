@@ -1,0 +1,6 @@
+SELECT
+customer_birthday,
+((strftime("%Y%m%d", "now")-strftime("%Y%m%d", customer_birthday))/10000) AS Age
+FROM
+customers
+;

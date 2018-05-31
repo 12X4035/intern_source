@@ -1,0 +1,70 @@
+WITH BASE AS (
+SELECT
+	 SUBSTR( request_time, 1, 10)  AS time,
+	customer_name AS name
+FROM
+	access_log
+INNER JOIN
+	customers
+ON
+	access_log.customer_id = customers.customer_id
+GROUP BY
+	time,
+	name	
+ORDER BY
+	name
+	),
+	BASE_01 AS (
+SELECT
+	 SUBSTR( request_time, 1, 10)  AS time_01,
+	customer_name AS name_01
+FROM
+	access_log
+INNER JOIN
+	customers
+ON
+	access_log.customer_id = customers.customer_id
+GROUP BY
+	time_01, 
+	name_01	
+ORDER BY
+	name_01
+),
+A AS (
+SELECT
+	time_01 AS TIME,
+	name_01 AS NAME
+FROM
+	BASE
+INNER  JOIN
+	BASE_01
+ON
+	BASE.name = BASE_01.name_01
+AND
+	BASE.time = DATE ( BASE_01.time_01, "-1 days" )
+	),
+	A_01 AS (
+SELECT
+	time_01 AS TIME_01,
+	name_01 AS NAME_01
+FROM
+	BASE
+INNER  JOIN
+	BASE_01
+ON
+	BASE.name = BASE_01.name_01
+AND
+	BASE.time = DATE ( BASE_01.time_01, "-1 days" )
+	)
+SELECT
+	TIME_01,
+	NAME_01
+FROM
+	A
+INNER  JOIN
+	A_01
+ON
+	A.NAME = A_01.NAME_01
+AND
+	A.TIME = DATE ( A_01.TIME_01, "-1 days" )
+;

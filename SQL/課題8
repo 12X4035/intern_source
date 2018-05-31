@@ -1,0 +1,57 @@
+WITH No_7 AS (
+SELECT
+	order_id AS Ord_id,
+	shop_id AS Shp_id,
+	orders.customer_id AS Customer_id,
+	substr ( order_time, 1,7 ) AS Month,
+	customer_location As Location,
+	order_amount AS Amount
+FROM
+	orders
+INNER JOIN
+customers
+ON
+orders.customer_id = customers.customer_id
+GROUP BY
+shop_id
+),
+Shop AS (
+SELECT	
+	Shp_id,
+	SUBSTR ( item_name,
+	1,
+	INSTR ( item_name,  " " ) -1 )
+	AS name,
+	SUM ( Amount ) AS Amount
+FROM
+	No_7
+INNER JOIN
+	items
+ON
+	No_7.Shp_id=items.shop_id
+GROUP BY
+	Shp_id, name
+ORDER BY
+	Shp_id
+),
+Total AS (
+SELECT
+Shp_id AS S_id,
+SUM ( Amount ) AS total
+FROM
+Shop
+GROUP BY
+Shp_id
+)
+SELECT
+Shp_id,
+name,
+Amount, 
+ROUND ( ( 1.0 * Amount / total ) *100 ) AS rate
+FROM
+Shop
+INNER JOIN
+Total
+ON
+Shop.Shp_id = Total.S_id
+;

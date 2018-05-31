@@ -1,0 +1,31 @@
+WITH Z AS(
+	SELECT
+	customer_id as id,
+	customer_gender,
+	customer_age/10 as f
+	FROM 
+	customers),
+X AS (
+SELECT
+Z.customer_gender as customer_gender,
+Z.f as f,
+count(*) AS q
+FROM
+customers
+INNER JOIN
+Z
+ON
+customers.customer_id=Z.id
+GROUP BY
+Z.f,
+Z.customer_gender
+)
+
+SELECT
+	customer_gender,
+	f,
+	q,
+	1.*q/(select sum(q) from X) AS rate
+FROM
+	X
+;

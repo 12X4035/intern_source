@@ -1,4 +1,4 @@
-INSERT INTO sato_diff_height
+INSERT INTO diff_height
 select
   tmp.*
   , from_height.height

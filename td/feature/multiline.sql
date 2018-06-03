@@ -1,5 +1,5 @@
 --全て含んでいるver.
-CREATE TABLE map.sato_multiline_1 AS(
+CREATE TABLE map.multiline_1 AS(
 
 WITH dumppoints AS(
 					SELECT
@@ -9,7 +9,7 @@ WITH dumppoints AS(
 						(ST_DumpPoints(ST_GeometryN(shape, 1))).path AS path,
 						(ST_DumpPoints(ST_GeometryN(shape, 1))).geom AS geom
 					FROM
-						map.sasai_aichi_test_link
+						map.aichi_test_link
 ),
 d_reforme AS(
 
@@ -37,7 +37,7 @@ ORDER BY
 
 
 --すでに求めた標高(from_node, to_node)は除いたver.
-CREATE TABLE map.sato_multiline_2 AS(
+CREATE TABLE map.multiline_2 AS(
 WITH count_line AS(
 					SELECT
     					objectid,
@@ -45,7 +45,7 @@ WITH count_line AS(
 						to_node_id,
 	    				COUNT(objectid) AS count
 					FROM
-		    			map.sato_multiline_1
+		    			map.multiline_1
 					GROUP BY
 			    		objectid,from_node_id,to_node_id
 )
@@ -55,7 +55,7 @@ SELECT
 FROM
     count_line AS c
 INNER JOIN
-	map.sato_multiline_1 AS m
+	map.multiline_1 AS m
 ON
 	m.objectid = c.objectid
 WHERE
@@ -72,7 +72,7 @@ WITH dumppoints AS(
 						(ST_DumpPoints(ST_GeometryN(shape, 1))).path AS path,
 						(ST_DumpPoints(ST_GeometryN(shape, 1))).geom AS geom
 					FROM
-						map.sasai_aichi_test_link
+						map.aichi_test_link
 ),
 df AS (
 					SELECT

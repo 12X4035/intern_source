@@ -7,7 +7,7 @@ CREATE VIEW map.filter_road AS(
 SELECT
 	*
 FROM
-	map.sato_node_name
+	map.node_name
 WHERE
 	pref1 =23 OR pref2 =23 OR pref3 =23 OR pref4 =23 OR pref5 =23 OR pref6 =23 OR pref7 =23 OR pref8 =23
 AND

@@ -4,11 +4,11 @@ import psycopg2
 import psycopg2.extras
 
 DB_INFO = {
-    "dbname": "gisdb",
-    "user": "map",
+    "dbname": ,
+    "user": ,
     "password": "",
-    "host": "localhost",
-    "port": 5432,
+    "host": ,
+    "port":,
 }
 
 
@@ -49,7 +49,7 @@ def main(argv):
                   objectid
                 from
                   map.road_link as l
-                  , (select * from map.yano_mesh_5000m where meshid = {0}) as m
+                  , (select * from map.mesh_5000m where meshid = {0}) as m
                 where
                   ST_Intersects(l.shape, m.shape)
               )
@@ -59,7 +59,7 @@ def main(argv):
                 h.*
               from
                 (select id, height, ST_SetSRID(ST_MakeBox2D(ST_SetSRID(ST_Point(lon_lefttop, lat_lefttop), 4612), ST_SetSRID(ST_Point(lon_rightbottom, lat_rightbottom), 4612)),4612) as height_shape from map.sato_height) as h
-                , (select * from map.yano_mesh_5000m where meshid = {0}) as m
+                , (select * from map.mesh_5000m where meshid = {0}) as m
               where
                 ST_Intersects(h.height_shape, m.shape)
            )

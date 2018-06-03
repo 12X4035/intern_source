@@ -17,7 +17,7 @@ import pandas as pd
 def main():
     #XMLを格納するフォルダ
     # path = "D:\python\DEM"
-    path = r"C:\Users\k.yano\pj\treasuredata\td_accident_risk\feature_extraction\yano\height\data"
+    path = 
     #GeoTiffを出力するフォルダ
     # geopath = "D:\python\GeoTiff"
     #ファイル名取得

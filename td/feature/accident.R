@@ -50,11 +50,11 @@ node<-as.data.frame(node)
 library(DBI)
 library(RPostgreSQL)
 %postgres接続（スキーマ指定できないのかな？）%
-con <- dbConnect(PostgreSQL(), host="mapfandb-0614-0716.cybcmdcfdbpm.us-east-1.rds.amazonaws.com", port=5432, dbname="road", user="futono", password="futono")
+con <- dbConnect(PostgreSQL(), host="", port=, dbname="", user="", password="")
 %table確認%
-dbExistsTable(con, "sato_node_accident")
+dbExistsTable(con, "node_accident")
  %ppostgresに書き込み%
-dbWriteTable(con, "sato_node_accident", value = node, append = TRUE, row.names = FALSE)
+dbWriteTable(con, "node_accident", value = node, append = TRUE, row.names = FALSE)
 dbDisconnect(con)
 
 write.csv(link,"link_accident.csv",quote=FALSE,row.names= FALSE)

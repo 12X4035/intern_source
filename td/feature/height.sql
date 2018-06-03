@@ -1,5 +1,5 @@
 /*
-CREATE TABLE sato_height(
+CREATE TABLE height(
 	height float,
 	lat_lefttop float,
 	lon_lefttop float,
@@ -7,7 +7,7 @@ CREATE TABLE sato_height(
 	lon_rightbottom float
 	);
 
-\copy sato_height(col_f1 filler int, height, lat_lefttop, lon_lefttop, lat_right_bottom, lon_right_bottom) from 'out.csv' with csv;
+\copy height(col_f1 filler int, height, lat_lefttop, lon_lefttop, lat_right_bottom, lon_right_bottom) from 'out.csv' with csv;
 */
 /**/
 
@@ -25,26 +25,26 @@ SELECT
 	from_height.height-to_height.height AS diff_height
 
 FROM
-	((map.sasai_aichi_test_link AS link
+	((map.aichi_test_link AS link
 
 INNER JOIN
-	map.sasai_aichi_test_node AS node2
+	map.aichi_test_node AS node2
 ON
 	from_node_id = node2.objectid)
 
 INNER JOIN
-	map.sasai_aichi_test_node As node1
+	map.aichi_test_node As node1
 ON
 	to_node_id = node1.objectid)
 														    
 INNER JOIN
-	map.sato_height AS from_height
+	map.height AS from_height
 ON
 	from_latitude  BETWEEN lat_rightbottom AND lat_lefttop
 AND
 	from_longitude  BETWEEN lon_rightbottom AND lon_lefttop
 INNER JOIN
-    map.sato_height_tmp AS to_height
+    map.height_tmp AS to_height
 ON
 	 to_latitude  BETWEEN lat_rightbottom AND lat_lefttop
 AND

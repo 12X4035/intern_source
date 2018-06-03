@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS sato_height (
+CREATE TABLE IF NOT EXISTS height (
   id INTEGER,
   height DOUBLE PRECISION,
   lat_lefttop DOUBLE PRECISION,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS tmp_from_to (
   to_latitide DOUBLE PRECISION,
   to_longitude DOUBLE PRECISION
 );
-CREATE TABLE IF NOT EXISTS sato_diff_height (
+CREATE TABLE IF NOT EXISTS diff_height (
   objectid INTEGER,
   from_node_id INTEGER,
   to_node_id INTEGER,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS sato_diff_height (
   to_height DOUBLE PRECISION,
   diff_height DOUBLE PRECISION
 );
-CREATE TABLE IF NOT EXISTS yano_mesh_5000m (
+CREATE TABLE IF NOT EXISTS mesh_5000m (
   meshid INTEGER,
   lat_lefttop DOUBLE PRECISION,
   lon_lefttop DOUBLE PRECISION,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS yano_mesh_5000m (
   lon_rightbottom DOUBLE PRECISION,
   shape GEOMETRY
 );
-CREATE TABLE IF NOT EXISTS yano_mesh_500m (
+CREATE TABLE IF NOT EXISTS mesh_500m (
   meshid INTEGER,
   lat_lefttop DOUBLE PRECISION,
   lon_lefttop DOUBLE PRECISION,

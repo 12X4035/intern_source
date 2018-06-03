@@ -1,5 +1,5 @@
 --愛知の交差点に絞る
-CREATE VIEW map.sato_tmp AS (
+CREATE VIEW map.tmp AS (
     SELECT
          objectid,
          name_kanji,
@@ -16,13 +16,13 @@ CREATE VIEW map.sato_tmp AS (
     FROM
         map.road_node AS a1
     INNER JOIN
-        map.sato_node_links AS a2
+        map.node_links AS a2
     ON
      a1.objectid = a2.nodeid
 );
 
 
-CREATE TABLE map.sato_node_name AS(
+CREATE TABLE map.node_name AS(
 WITH road_name AS (
 SELECT
 	link.objectid,
@@ -61,7 +61,7 @@ SELECT
     c1.display_kanji AS name1,
     c.shape
 FROM
-    map.sato_tmp AS c    
+    map.tmp AS c    
 LEFT OUTER JOIN
     road_name AS c1
 ON
@@ -396,11 +396,11 @@ link8
 );
     
 --pref,  class, road_no でfillterをかける 
-CREATE TABLE map.sato_node_info AS(
+CREATE TABLE map.node_info AS(
 SELECT
     *
 FROM
-    map.sato_node_name
+    map.node_name
 WHERE
     class
     road_no

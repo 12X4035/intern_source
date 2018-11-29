@@ -1,0 +1,29 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+CREATE SCHEMA IF NOT EXISTS `handson_demo` ;
+
+USE `handson_demo` ;
+
+CREATE TABLE IF NOT EXISTS `handson_demo`.`users` (
+ `user_id` INT NOT NULL AUTO_INCREMENT,
+ `mail_address` VARCHAR(255) NOT NULL,
+ `password` VARCHAR(255) NOT NULL,
+ `address` VARCHAR(40) NULL,
+ `nickname` VARCHAR(40) NULL,
+ `created_at` DATETIME NULL,
+ `updated_at` DATETIME NULL,
+ PRIMARY KEY (`user_id`),
+ UNIQUE KEY `mail_address_UNIQUE` (`mail_address`))
+ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `handson_demo`.`posts` (
+ `post_id` INT NOT NULL AUTO_INCREMENT,
+ `content` VARCHAR(255) NOT NULL,
+ `user_id` INT NOT NULL,
+ `created_at` DATETIME NULL,
+ `updated_at` DATETIME NULL,
+ PRIMARY KEY (`post_id`),
+ CONSTRAINT `FK_user_post` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`))
+ENGINE=InnoDB DEFAULT CHARSET=utf8;
